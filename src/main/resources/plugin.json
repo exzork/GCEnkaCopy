@@ -1,0 +1,7 @@
+{
+  "name": "GCEnkaCopy",
+  "description": "GC Enka Copy",
+  "version": "1.0.0",
+  "author": ["ExZork"],
+  "mainClass": "me.exzork.GCEnkaCopy"
+}
