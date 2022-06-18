@@ -100,6 +100,11 @@ public class ApplyCommand implements CommandHandler{
             CommandHandler.sendMessage(sender, "Setting constellations...");
             for (int avatarId: constellationsData.keySet()){
                 Avatar avatar = avatars.get(avatarId);
+
+                avatar.getTalentIdList().clear();
+                avatar.setCoreProudSkillLevel(0);
+                avatar.recalcStats();
+
                 avatar.getTalentIdList().addAll(constellationsData.get(avatarId));
                 avatar.recalcConstellations();
                 for (int talentId: avatar.getTalentIdList()){
