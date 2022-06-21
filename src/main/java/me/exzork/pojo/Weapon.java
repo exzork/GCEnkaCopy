@@ -14,7 +14,7 @@ public class Weapon{
 	private HashMap<String,Integer> affixMap;
 
 	@SerializedName("promoteLevel")
-	private Integer promoteLevel;
+	private Integer promoteLevel = 0;
 
 	public int getLevel(){
 		return level;
