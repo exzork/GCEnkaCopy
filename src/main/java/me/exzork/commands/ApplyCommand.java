@@ -104,6 +104,7 @@ public class ApplyCommand implements CommandHandler{
                 avatar.getTalentIdList().clear();
                 avatar.setCoreProudSkillLevel(0);
                 avatar.recalcStats();
+                avatar.recalcConstellations();
 
                 avatar.getTalentIdList().addAll(constellationsData.get(avatarId));
                 avatar.recalcConstellations();
