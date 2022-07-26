@@ -12,7 +12,7 @@ import me.exzork.GCEnkaCopy;
 import me.exzork.pojo.AvatarInfoListItem;
 import me.exzork.pojo.EquipListItem;
 import me.exzork.pojo.Response;
-import com.google.common.reflect.TypeToken;
+import com.google.gson.reflect.TypeToken;
 import emu.grasscutter.Grasscutter;
 import emu.grasscutter.command.Command;
 import emu.grasscutter.command.CommandHandler;
@@ -26,11 +26,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Command(label = "enka", permission = "player.give", usage = "/enka <ssm uid|ssm name>", description = "Copy stats data from enka.shinshin.moe")
+@Command(
+        label = "enka",
+        permission = "player.give",
+        usage = "/enka <ssm uid|ssm name>"
+)
 public class ApplyCommand implements CommandHandler{
     @Override
     public void execute(Player sender, Player targetPlayer, List<String> args) {
-        String urlString = "https://enka.shinshin.moe/u/"+args.get(0)+"/__data.json";
+        String urlString = "https://enka.network/u/"+args.get(0)+"/__data.json";
         try{
             URL url = new URL(urlString);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -55,7 +59,7 @@ public class ApplyCommand implements CommandHandler{
             for (AvatarInfoListItem avatarInfoListItem : response.getAvatarInfoList()){
                 Avatar avatar = sender.getAvatars().getAvatarById(avatarInfoListItem.getAvatarId());
                 if (avatar == null){
-                    String commandAvatar = "givechar "+avatarInfoListItem.getAvatarId()+" "+response.getPlayerInfo().getShowAvatarInfoList().stream().filter(a -> a.getAvatarId() == avatarInfoListItem.getAvatarId()).findFirst().get().getLevel();
+                    String commandAvatar = "give "+avatarInfoListItem.getAvatarId()+" lv"+response.getPlayerInfo().getShowAvatarInfoList().stream().filter(a -> a.getAvatarId() == avatarInfoListItem.getAvatarId()).findFirst().get().getLevel();
                     GCEnkaCopy.getInstance().getLogger().info(commandAvatar);
                     CommandMap.getInstance().invoke(sender,sender,commandAvatar);
                     do {
