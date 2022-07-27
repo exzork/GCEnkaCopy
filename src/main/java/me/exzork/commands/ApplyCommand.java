@@ -22,6 +22,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ApplyCommand implements CommandHandler{
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
-            BufferedReader reader = connection.getResponseCode() == 200 ? new BufferedReader(new InputStreamReader(connection.getInputStream())) : new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            BufferedReader reader = connection.getResponseCode() == 200 ? new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)) : new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
             String line;
             StringBuilder sb = new StringBuilder();
             while((line = reader.readLine()) != null){
