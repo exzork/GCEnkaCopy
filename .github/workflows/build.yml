@@ -14,8 +14,9 @@ jobs:
         java: [
           17, 18
           # Current Java LTS & minimum supported by Grasscutter
+          # I also included 18 as you seem to compile with it but it make the job 2x harder so i recommend you to remove it
         ]
-        # and run on both Linux and Windows
+        # and run on both Linux and Windows to be sure there's no OS compilation related problems
         os: [ubuntu-20.04, windows-2022]
     runs-on: ${{ matrix.os }}
     steps:
@@ -33,7 +34,8 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
-        if: ${{ runner.os == 'Linux' && matrix.java == '17' }} # Only upload artifacts built from latest LTS java on one OS
+        if: ${{ runner.os == 'Linux' && matrix.java == '17' }}
+        # Only upload artifacts built from latest LTS java on one OS
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
