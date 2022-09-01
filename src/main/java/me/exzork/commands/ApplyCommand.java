@@ -8,6 +8,7 @@ import emu.grasscutter.game.inventory.GameItem;
 import emu.grasscutter.game.inventory.ItemType;
 import emu.grasscutter.game.props.ActionReason;
 import emu.grasscutter.server.packet.send.*;
+import emu.grasscutter.utils.JsonUtils;
 import me.exzork.GCEnkaCopy;
 import me.exzork.pojo.AvatarInfoListItem;
 import me.exzork.pojo.EquipListItem;
@@ -49,7 +50,7 @@ public class ApplyCommand implements CommandHandler{
             }
             reader.close();
             String json = sb.toString();
-            Response response = Grasscutter.getGsonFactory().fromJson(json, new TypeToken<Response>(){}.getType());
+            Response response = JsonUtils.decode(json, Response.class);
             HashMap<Integer,ArrayList<GameItem>> itemsData = new HashMap<>();
             HashMap<Integer,HashMap<String,Integer>> skillsData = new HashMap<>();
             HashMap<Integer,ArrayList<Integer>> constellationsData = new HashMap<>();
@@ -59,13 +60,19 @@ public class ApplyCommand implements CommandHandler{
             CommandHandler.sendMessage(sender, "Giving characters, artifacts, and weapons...");
             for (AvatarInfoListItem avatarInfoListItem : response.getAvatarInfoList()){
                 Avatar avatar = sender.getAvatars().getAvatarById(avatarInfoListItem.getAvatarId());
+                int avatarId = avatarInfoListItem.getAvatarId();
+                int avatarLvl = response.getPlayerInfo().getShowAvatarInfoList().stream().filter(a -> a.getAvatarId() == avatarInfoListItem.getAvatarId()).findFirst().get().getLevel();
+                CommandHandler.sendMessage(sender,"Avatar "+avatarId+" lvl "+avatarLvl);
                 if (avatar == null){
-                    String commandAvatar = "give "+avatarInfoListItem.getAvatarId()+" lv"+response.getPlayerInfo().getShowAvatarInfoList().stream().filter(a -> a.getAvatarId() == avatarInfoListItem.getAvatarId()).findFirst().get().getLevel();
+                    String commandAvatar = "give "+avatarId+" lv"+avatarLvl;
                     GCEnkaCopy.getInstance().getLogger().info(commandAvatar);
                     CommandMap.getInstance().invoke(sender,sender,commandAvatar);
                     do {
                         avatar = sender.getAvatars().getAvatarById(avatarInfoListItem.getAvatarId());
                     } while (avatar == null);
+                }else{
+                    avatar.setLevel(avatarLvl);
+                    avatar.setPromoteLevel(Avatar.getMinPromoteLevel(avatarLvl));
                 }
                 ArrayList<GameItem> items = new ArrayList<>();
                 for (EquipListItem equipListItem: avatarInfoListItem.getEquipList()){
@@ -147,6 +154,7 @@ public class ApplyCommand implements CommandHandler{
             for (Avatar avatar: avatars.values()){
                 avatar.recalcStats();
                 avatar.save();
+                sender.sendPacket(new PacketAvatarAddNotify(avatar,false));
             }
 
             CommandHandler.sendMessage(sender, "Done copying data from uid : "+args.get(0)+" nickname : "+response.getPlayerInfo().getNickname());
